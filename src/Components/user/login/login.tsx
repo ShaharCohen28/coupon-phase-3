@@ -4,7 +4,7 @@ import UserData from '../../../Moduls/UserData';
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { threadId } from "worker_threads";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import notify, { ErrorMessage, SuccessMessage } from '../../../util/notify';
 import jwtAxios from '../../../util/JWTAxios';
@@ -15,6 +15,8 @@ import { userLogin } from "../../../redux/authState";
 import { store } from "../../../redux/store";
 import { addCompany, getAllCompanies } from "../../../redux/companyState";
 import { addCustomer, getAllCustomers } from "../../../redux/customerState";
+import { getAllCoupons } from "../../../redux/couponState";
+import Company from "../../../Moduls/Company";
 
 function Login(): JSX.Element {
 
@@ -25,7 +27,11 @@ function Login(): JSX.Element {
         setUserType(event.target.value as string);
     };
     const {register,handleSubmit, formState:{errors}} = useForm<UserData>();
- 
+
+    const checkType=(type:string)=>{
+        return store.getState().authState.userType===type;
+    }
+
     const send=(msg:UserData)=>{
         jwtAxios.post(globals.urls.login,msg)
         .then(response=>{
@@ -33,7 +39,7 @@ function Login(): JSX.Element {
             dispatch(userLogin(response.headers.authorization));
         })
         .then(()=>{
-            if(store.getState().authState.userType==='ADMIN'){
+            if(checkType('ADMIN')){
                 jwtAxios.get(globals.admin.allCompanies)
                 .then(response=>{
                     dispatch(getAllCompanies(response.data));
@@ -44,7 +50,7 @@ function Login(): JSX.Element {
             }
         })
         .then(()=>{
-            if(store.getState().authState.userType==='ADMIN'){
+            if(checkType('ADMIN')){
                 jwtAxios.get(globals.admin.allCustomers)
                 .then(response=>{
                     dispatch(getAllCustomers(response.data));
@@ -54,19 +60,50 @@ function Login(): JSX.Element {
                 });
             }
         })
-        .then(response=>{
-            if(store.getState().authState.userType==='COMPANY'){
-                jwtAxios.get(globals.company.companyDetails)
-                .then(response=>{
-                    dispatch(addCompany(response.data))
-                })
-                .catch(error=>{
-                    notify.error("error loading company details");
-                })
+        .then(()=>{
+            if(checkType('COMPANY')){
+                if(store.getState().companyState.companies.length<1){
+                    console.log("help meeeeee im alive")
+                    jwtAxios.get<Company>(globals.company.companyDetails)
+                    .then((response)=>{
+                        console.log(response.data.coupons);
+                        let companies:Company[]=[];
+                        companies.push(response.data);
+                        store.dispatch(getAllCompanies(companies));
+                        store.dispatch(getAllCoupons((response.data as Company).coupons));
+                        
+                    })
+                    .catch(error=>{
+                        notify.error("error loading company details");
+                    })   
+                }
+                
             }
         })
-        .then(response=>{
-            if(store.getState().authState.userType==='CUSTOMER'){
+        // .then(()=>{
+        //     if(checkType('COMPANY')){
+        //         jwtAxios.get(globals.company.companyDetails)
+        //         .then(response=>{
+        //             dispatch(getAllCompanies(response.data));
+        //         })
+        //         .catch(error=>{
+        //             notify.error("error loading company details");
+        //         })
+        //     }
+        // })
+        // .then(()=>{
+        //     if(checkType('COMPANY')){
+        //         jwtAxios.get(globals.company.allCompanyCoupons)
+        //         .then(response=>{
+        //             dispatch(getAllCoupons(response.data));
+        //         })
+        //         .catch(error=>{
+        //             notify.error("error loading company's coupons");
+        //         })
+        //     }
+        // })
+        .then(()=>{
+            if(checkType('CUSTOMER')){
                 jwtAxios.get(globals.customer.customerDetails)
                 .then(response=>{
                     dispatch(addCustomer(response.data));
@@ -78,6 +115,8 @@ function Login(): JSX.Element {
         })
         .then(()=>{
             // console.log(store.getState().companyState);
+            // console.log(store.getState().couponState);
+            // console.log(store.getState().guestState)
             // console.log(store.getState().customerState);
             navigate("/");
         })
@@ -115,6 +154,11 @@ function Login(): JSX.Element {
         })
         */
     }
+    useEffect(()=>{
+        // console.log(store.getState().companyState);
+        // console.log(store.getState().couponState);
+        // console.log(store.getState().guestState)
+    },[])
     
     return (
         <div className="login">
@@ -161,7 +205,7 @@ function Login(): JSX.Element {
             
                 <ButtonGroup >
                     <Button type="submit" color="primary" variant="contained" >login</Button>
-                    <Button type="reset" color="secondary" variant="contained">clear</Button>
+                    <Button type="reset" color="error" onClick={()=>setUserType("")} variant="contained">clear</Button>
                 </ButtonGroup> 
                 <br/>
             </Form>

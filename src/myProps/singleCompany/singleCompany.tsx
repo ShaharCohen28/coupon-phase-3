@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, Button, ButtonGroup, Card, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
 import { textAlign } from "@mui/system";
 import Company from "../../Moduls/Company";
 import "./singleCompany.css";
@@ -48,6 +48,11 @@ function SingleCompany(props: SingleCompanyProps): JSX.Element {
     }
     return (
         <Card elevation={5} sx={{width:260,display:"inline-block",mx:"20px"}} >
+             <CardHeader
+                avatar={
+                    <Avatar sx={{bgcolor:'secondary.main'}}>{props.company.id}</Avatar>
+                }
+            />
             <CardContent>
                 <Typography variant="h5">{props.company.name}</Typography>
                 <Typography variant="body2">{props.company.email}</Typography>

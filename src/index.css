@@ -33,3 +33,11 @@ hr{
 .Update:hover{
   color:green
 }
+
+
+.Single{
+  display: inline-block;
+  text-align: left;
+  padding: 5px;
+  margin: 10px;
+}

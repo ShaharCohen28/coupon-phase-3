@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, CardActions, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Customer from "../../Moduls/Customer";
 import "./singleCustomer.css";
@@ -45,6 +45,11 @@ function SingleCustomer(props: SingleCustomerProps): JSX.Element {
 
     return (
         <Card elevation={5} sx={{width:300,display:"inline-block",mx:"20px"}} >
+            <CardHeader
+                avatar={
+                    <Avatar sx={{bgcolor:'secondary.main'}}>{props.customer.id}</Avatar>
+                }
+            />
             <CardContent>
                 <Typography variant="h5">{props.customer.firstName}{" "}{props.customer.lastName}</Typography>
                 <Typography variant="body2">{props.customer.email}</Typography>

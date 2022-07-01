@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Customer from "../../../Moduls/Customer";
 import { store } from "../../../redux/store";
 import notify from "../../../util/notify";
-import { Collapse, Fab, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Button, Collapse, Fab, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import SingleCoupon from "../../../myProps/singleCoupon/singleCoupon";
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
@@ -40,13 +40,13 @@ function GetCustomerCoupons(): JSX.Element {
         <div className="getCustomerCoupons">
             <Typography variant="h3">{customer.firstName}&nbsp;{customer.lastName}'s Coupons</Typography>
             <br/>
-            <Fab 
+            <Button 
                 color={open?"secondary":"primary"} 
-                variant="extended" 
                 onClick={handleOpen}
+                variant="contained"
             >
                 {open ? <ExpandLess sx={{mr:1}}/> : <ExpandMore sx={{mr:1}}/>} {open?"CLOSE":"FILTER"}
-            </Fab>
+            </Button>
             <br/>
 
             <Collapse in={open}>

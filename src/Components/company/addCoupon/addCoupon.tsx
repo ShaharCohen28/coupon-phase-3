@@ -17,7 +17,6 @@ import Company from "../../../Moduls/Company";
 import jwtAxios from '../../../util/JWTAxios';
 import globals from '../../../util/globals';
 import { addCoupon } from "../../../redux/couponState";
-import { updateCompany } from "../../../redux/companyState";
 
 
 function AddCoupon(): JSX.Element {
@@ -56,6 +55,11 @@ function AddCoupon(): JSX.Element {
                 notify.success("coupon added");
                 msg.id=response.data;
                 dispatch(addCoupon(msg));
+                // console.log(store.getState().companyState.companies)
+                // console.log(store.getState().couponState.coupons)
+                // console.log(store.getState().guestState.allCoupons)
+
+
                 
             }else{
                 notify.error("coupon not added");
@@ -106,6 +110,7 @@ function AddCoupon(): JSX.Element {
                     label="category"
                     className="addField"
                     required 
+                    value={category}
                     {...register("category",{onChange:(e)=>handleChange(e)})}
                 >
                     {categories.map((item,index)=><MenuItem key={index} value={item}>{item}</MenuItem>)}
@@ -179,7 +184,7 @@ function AddCoupon(): JSX.Element {
                 <br/><br/>
                 <ButtonGroup variant="contained">
                     <Button type="submit" color="primary" >add</Button>
-                    <Button type="reset" color="error" >clear</Button>
+                    <Button type="reset" onClick={()=>setCategory("")} color="error" >clear</Button>
                 </ButtonGroup> 
                 
             </Form>

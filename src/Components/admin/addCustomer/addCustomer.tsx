@@ -93,9 +93,9 @@ function AddCustomer(): JSX.Element {
                 <br/><br/>
                 
 
-                <ButtonGroup >
+                <ButtonGroup variant="contained">
                     <Button type="submit" color="primary" >add</Button>
-                    <Button type="reset" color="secondary" >clear</Button>
+                    <Button type="reset" color="error" >clear</Button>
                 </ButtonGroup> 
             </Form>
         </div>

@@ -16,6 +16,7 @@ import { logoutCompany } from "../../../redux/companyState";
 import { logoutCustomer } from "../../../redux/customerState";
 import { amber, grey, deepOrange } from "@mui/material/colors";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { logoutCoupon } from "../../../redux/couponState";
 
 
 interface myHeaderProps{
@@ -44,6 +45,7 @@ function MyHeader( props:myHeaderProps): JSX.Element {
             dispatch(userLogout());
             dispatch(logoutCompany());
             dispatch(logoutCustomer());
+            dispatch(logoutCoupon());
             handleClose();
             navigate("/");
         }

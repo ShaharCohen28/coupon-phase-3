@@ -1,4 +1,5 @@
 import Coupon from "../Moduls/Coupon";
+import Company from '../Moduls/Company';
 
 export class couponState{
     coupons?:Coupon[]=[];
@@ -9,6 +10,7 @@ export enum couponActionType{
     AddCoupon="AddCoupon",
     UpdateCoupon="UpdateCoupon",
     DeleteCoupon="DeleteCoupon",
+    LogoutCOupon="LogoutCOupon",
 }
 
 export interface couponAction{
@@ -16,8 +18,8 @@ export interface couponAction{
     payload?:any;
 }
 
-export function getAllCoupons(coupons:Coupon[]):couponAction{
-    return{type:couponActionType.GetAllCoupons,payload:coupons}
+export function getAllCoupons(coupon:Coupon[]):couponAction{
+    return{type:couponActionType.GetAllCoupons,payload:coupon}
 }
 
 export function addCoupon(coupon:Coupon):couponAction{
@@ -32,6 +34,10 @@ export function deleteCoupon(couponId:number):couponAction{
     return{type:couponActionType.DeleteCoupon,payload:couponId}
 }
 
+export function logoutCoupon():couponAction{
+    return{type:couponActionType.LogoutCOupon}
+}
+
 
 export function couponReducer(currentState:couponState=new couponState,action:couponAction):couponState{
     var newState={...currentState}
@@ -42,7 +48,7 @@ export function couponReducer(currentState:couponState=new couponState,action:co
         break;
 
         case couponActionType.DeleteCoupon:
-
+            newState.coupons=[...newState.coupons].filter(item=>item.id!=action.payload);
         break;
 
         case couponActionType.GetAllCoupons:
@@ -50,7 +56,13 @@ export function couponReducer(currentState:couponState=new couponState,action:co
         break;
 
         case couponActionType.UpdateCoupon:
+            var updatedCoupons=[...newState.coupons].filter(item=>item.id!=action.payload.id);
+            updatedCoupons.push(action.payload);
+            newState.coupons=updatedCoupons;
+        break;
 
+        case couponActionType.LogoutCOupon:
+            newState.coupons=[];
         break;
     }
 

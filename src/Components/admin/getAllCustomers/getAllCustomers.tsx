@@ -1,4 +1,4 @@
-import { Typography, Fab, Collapse, TextField } from "@mui/material";
+import { Typography, Fab, Collapse, TextField, ButtonGroup, Button } from "@mui/material";
 import { useState, useEffect, SyntheticEvent } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,8 @@ import "./getAllCustomers.css";
 import AddIcon from '@mui/icons-material/Add';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import SearchIcon from '@mui/icons-material/Search';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 
 function GetAllCustomers(): JSX.Element {
@@ -18,6 +20,8 @@ function GetAllCustomers(): JSX.Element {
     const [open,setOpen]=useState(false);
     const [searchFisrtName,setSearchFirstName]=useState("");
     const [searchLastName,setSearchLastName]=useState("");
+    const [tempFisrtName,setTempFirstName]=useState("");
+    const [tempLastName,setTempLastName]=useState("");
 
     useEffect(()=>{
         console.log(store.getState().customerState.customers);
@@ -35,31 +39,43 @@ function GetAllCustomers(): JSX.Element {
 
     const customerFirstName=(sender:SyntheticEvent)=>{
         const value=(sender.target as HTMLInputElement).value;
-        setSearchFirstName(value);
+        setTempFirstName(value);
     }
     const customerLastName=(sender:SyntheticEvent)=>{
         const value=(sender.target as HTMLInputElement).value;
-        setSearchLastName(value);
+        setTempLastName(value);
+    }
+    const findCustomer=()=>{
+        setSearchFirstName(tempFisrtName);
+        setSearchLastName(tempLastName);
+    }
+    const handleReset=()=>{
+        setTempFirstName("");
+        setTempLastName("");
+        setSearchFirstName("");
+        setSearchLastName("");
     }
     
     return (
         <div className="getAllCustomers">
 			<Typography variant="h3">All Customers</Typography><br/>
-            <Fab 
-                color="primary" 
-                variant="extended" 
-                aria-label="add" 
-                onClick={()=>{navigate("/admin/addCustomer")}}
-            >
-                <AddIcon sx={{mr:1}}/>Add Customer
-            </Fab>
+            <ButtonGroup variant="contained">
+                <Button 
+                    color="primary" 
+                    aria-label="add" 
+                    onClick={()=>{navigate("/admin/addCustomer")}}
+                >
+                    <AddIcon sx={{mr:1}}/>Add Customer
+                </Button>
 
-            <Fab 
-                color="secondary" 
-                onClick={handleOpen}
-            >   
-                {open ? <ExpandLess /> : <ExpandMore />}
-            </Fab>
+                <Button 
+                    color="secondary" 
+                    onClick={handleOpen}
+                    size="small"
+                >   
+                    {open ? <ExpandLess /> : <ExpandMore />}
+                </Button>
+            </ButtonGroup>
             <br/><br/>
 
             <Collapse in={open}>
@@ -67,7 +83,7 @@ function GetAllCustomers(): JSX.Element {
                     variant="outlined" 
                     label="customer first name" 
                     onChange={customerFirstName} 
-                    value={searchFisrtName}
+                    value={tempFisrtName}
                 >
                 </TextField>&nbsp;&nbsp;
 
@@ -75,9 +91,13 @@ function GetAllCustomers(): JSX.Element {
                     variant="outlined" 
                     label="customer last name" 
                     onChange={customerLastName} 
-                    value={searchLastName}
+                    value={tempLastName}
                 >
-                </TextField>&nbsp;&nbsp;
+                </TextField><br/><br/>
+                <ButtonGroup variant="contained">
+                    <Button color="primary" onClick={findCustomer}><SearchIcon/></Button>
+                    <Button color="error" onClick={handleReset}><RestartAltIcon/></Button>
+                </ButtonGroup>
                 
             </Collapse>
             <br/>
