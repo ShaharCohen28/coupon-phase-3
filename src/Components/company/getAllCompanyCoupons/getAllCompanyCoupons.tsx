@@ -27,7 +27,7 @@ function GetAllCompanyCoupons(): JSX.Element {
     const [category,setCategory]=useState('');
     const [tempCategory,setTempCategory]=useState('')
     const [maxPrice,setMaxPrice]=useState(0);
-    const[price,setPrice]=useState(Number.MAX_VALUE);
+    const [price,setPrice]=useState(0);
     const [tempPrice,setTempPrice]=useState(0);
 
     
@@ -35,22 +35,40 @@ function GetAllCompanyCoupons(): JSX.Element {
     const handleOpen=()=>{
         setOpen(!open);
     }
+    const findMaxAdmin=()=>{
+        let currentMax=0;
+        for(let counter=0; counter<company.coupons?.length; counter++){
+            if(company.coupons[counter].price>currentMax){
+                currentMax=company.coupons[counter].price;
+            }
+        }
+        return currentMax;
+    }
+    const findMaxCompany=()=>{
+        let currentMax=0;
+        for(let counter=0; counter<coupons.length; counter++){
+            if(coupons[counter].price>currentMax){
+                currentMax=coupons[counter].price;
+            }
+        }
+        return currentMax;
+    }
+
 
     useEffect(()=>{
         if(store.getState().authState.userType==='ADMIN'){
-            setCompany(store.getState().companyState.companies.find(item=>item.id==companyId));
-            // findMaxPrice(csompany.coupons?);
-            // setCoupons(company.coupons);
-        }else if(store.getState().authState.userType==='COMPANY'){
-            // console.log(store.getState().companyState.companies);
-            // setCompany(store.getState().companyState.companies.find(item=>item.id==companyId));
-            setCoupons(store.getState().couponState.coupons);
+            setCompany(store.getState().companyState.companies.find(item=>item.id==companyId)); 
+            setMaxPrice(findMaxAdmin);
+            console.log(maxPrice);
 
+        }else if(store.getState().authState.userType==='COMPANY'){
+            setCoupons(store.getState().couponState.coupons);
+            setMaxPrice(findMaxCompany());
+            console.log(maxPrice);
         }else{
             notify.error("please login");
             navigate("/login");
         }
-        
     },[])
 
     const handleChange=(event:SelectChangeEvent)=>{
@@ -60,6 +78,9 @@ function GetAllCompanyCoupons(): JSX.Element {
     //     const value=(sender.target as HTMLInputElement).value;
     //     setTempPrice(value);
     // }
+    const searchPrice=(event:Event, newValue:number | number[])=>{
+        setTempPrice(newValue as number);
+    }
 
     const findCoupon=()=>{
         setCategory(tempCategory);
@@ -69,8 +90,8 @@ function GetAllCompanyCoupons(): JSX.Element {
     const handleReset=()=>{
         setTempCategory('');
         setCategory('');
-        setPrice(Number.MAX_VALUE);
-        setTempPrice(0);
+        setPrice(maxPrice);
+        setTempPrice(maxPrice);
 
     }
     return (
@@ -110,21 +131,24 @@ function GetAllCompanyCoupons(): JSX.Element {
                     label="category"
                     onChange={handleChange}
                     value={tempCategory}
+                    sx={{width:300}}
                 >
                     {categories.map((item,index)=><MenuItem key={index} value={item}>{item}</MenuItem>)}
                 </Select>
-                <TextField
+                {/* <TextField
                     type="number"
                     variant="outlined"
                     label="price"
 
-                />
-                <br/>
+                />*/}
+                <br/> 
                 <Slider
                     min={0}
-                    max={100}
-                    defaultValue={100}
+                    max={maxPrice}
+                    defaultValue={maxPrice}
                     color="secondary"
+                    valueLabelDisplay="on"
+                    value={tempPrice}
                     sx={{width:300}}
                 />
                 <br/><br/>

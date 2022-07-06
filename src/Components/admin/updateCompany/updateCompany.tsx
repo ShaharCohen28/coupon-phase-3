@@ -37,13 +37,14 @@ function UpdateCompany(): JSX.Element {
         .then(response=>{
             if(response.status<300){
                 notify.success("company updated");
+                store.dispatch(updateCompany(company));
             }else{
                 notify.error("something went terribly wrong");
                 console.log(response.data);
             }
         })
         .then(()=>{
-            store.dispatch(updateCompany(company));
+            
         })
         .catch(error=>{
             notify.error("update failed");

@@ -4,19 +4,23 @@ import { useEffect, useState } from 'react';
 import Customer from "../../../Moduls/Customer";
 import { store } from "../../../redux/store";
 import notify from "../../../util/notify";
-import { Button, Collapse, Fab, InputLabel, MenuItem, Select, Typography } from "@mui/material";
+import { Button, ButtonGroup, Collapse, Fab, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import SingleCoupon from "../../../myProps/singleCoupon/singleCoupon";
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { categories } from "../../../Moduls/Categories";
+import SearchIcon from '@mui/icons-material/Search';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+
 
 function GetCustomerCoupons(): JSX.Element {
     const navigate=useNavigate();
     const location=useLocation();
     const { customerId }=location.state as any;
     const [customer,setCustomer]=useState(new Customer());
-    const [searchCategory,setSearchCategory]=useState("");
     const [open,setOpen]=useState(false);
+    const [category,setCategory]=useState('');
+    const [tempCategory,setTempCategory]=useState('')
     
 
     const handleOpen=()=>{
@@ -36,6 +40,20 @@ function GetCustomerCoupons(): JSX.Element {
         
     },[])
 
+    const handleChange=(event:SelectChangeEvent)=>{
+        setTempCategory(event.target.value as string);
+    }
+    const findCoupon=()=>{
+        setCategory(tempCategory);
+    }
+
+    const handleReset=()=>{
+        setTempCategory('');
+        setCategory('');
+
+
+    }
+
     return (
         <div className="getCustomerCoupons">
             <Typography variant="h3">{customer.firstName}&nbsp;{customer.lastName}'s Coupons</Typography>
@@ -54,12 +72,18 @@ function GetCustomerCoupons(): JSX.Element {
                 <Select 
                     labelId="categoryType" 
                     label="category"
+                    value={tempCategory}
+
                 >
                     {categories.map((item,index)=><MenuItem key={index} value={item}>{item}</MenuItem>)}
                 </Select>
+                <ButtonGroup variant="contained">
+                    <Button color="primary" onClick={findCoupon}><SearchIcon/></Button>
+                    <Button color="error" onClick={handleReset}><RestartAltIcon/></Button>
+                </ButtonGroup>
             </Collapse>
             <br/>
-            {customer.coupons?.map(item=><SingleCoupon key={item.id} coupon={item}></SingleCoupon>)}
+            {customer.coupons?.filter(item=>item.category.match(category)).map(item=><SingleCoupon key={item.id} coupon={item}></SingleCoupon>)}
         </div>
     );
 }
